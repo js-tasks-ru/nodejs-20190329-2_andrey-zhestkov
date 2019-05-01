@@ -27,7 +27,6 @@ const router = new Router();
 router.get('/users', async (ctx) => {
   ctx.body = await new Promise((resolve) => {
     UserModel.find((err, res) => {
-      console.log(res);
       resolve(res);
     });
   });
@@ -83,10 +82,8 @@ router.patch('/users/:id', async (ctx) => {
 router.post('/users', async (ctx) => {
   const {email, displayName} = ctx.request.body;
   ctx.body = await new Promise((resolve) => {
-    console.log('PROMISE CONSTRUCTOR');
     UserModel.findOne({email}, async (err, foundUser) => {
       if (foundUser) {
-        console.log('user found');
         ctx.status = 400;
         resolve({
           errors: {
