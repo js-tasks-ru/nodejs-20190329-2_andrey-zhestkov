@@ -1,3 +1,21 @@
+const User = require('../../models/User');
+
 module.exports = function authenticate(strategy, email, displayName, done) {
-  done(null, false, `функция аутентификации с помощью ${strategy} не настроена`);
+  if (!email) {
+    done(null, false, 'Не указан email');
+    return;
+  }
+  User.findOne({email}, (err, user) => {
+    if (err || !user) {
+      User.create({email, displayName}, (err, user) => {
+        if (err) {
+          done(err);
+        } else {
+          done(null, user);
+        }
+      });
+    } else {
+      done(null, user);
+    }
+  });
 };

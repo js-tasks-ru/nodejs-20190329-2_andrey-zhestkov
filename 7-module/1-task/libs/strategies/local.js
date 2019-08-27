@@ -4,6 +4,17 @@ const User = require('../../models/User');
 module.exports = new LocalStrategy(
     {usernameField: 'email', session: false},
     function(email, password, done) {
-      done(null, false, 'Стратегия подключена, но еще не настроена');
+      User.findOne({email}, async (err, user) => {
+        if (err || !user) {
+          done(null, false, 'Нет такого пользователя');
+          return;
+        }
+        const isValid = await user.checkPassword(password);
+        if (isValid) {
+          done(null, user);
+        } else {
+          done(null, false, 'Невереный пароль');
+        }
+      });
     }
 );
